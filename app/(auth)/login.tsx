@@ -41,7 +41,7 @@ export default function Login() {
             {/* Brand Section */}
             <View style={styles.brandSection}>
                 <View style={styles.logoContainer}>
-                    <Ionicons name="leaf" size={32} color={COLORS.primary} />
+                    <Ionicons name="aperture" size={32} color={COLORS.primary} />
                 </View>
                 <Text style={styles.appName}>GetOut</Text>
                 <Text style={styles.tagline}>Less Swipe, More Life</Text>
