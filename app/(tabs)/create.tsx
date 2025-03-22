@@ -58,6 +58,9 @@ export default function Create() {
         caption,
       });
 
+      setSelectedImage(null);
+      setCaption("");
+
       router.push("/(tabs)");
 
 

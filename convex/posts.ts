@@ -137,3 +137,66 @@ export const toggleLike = mutation({
     }
   },
 });
+
+export const deletePost = mutation({
+  args: {
+    postId: v.id("posts"),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    const post = await ctx.db.get(args.postId);
+
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    //verify ownership
+    if (post.userId !== currentUser._id) {
+      throw new Error("Unauthorized");
+    }
+
+    // delete associated likes
+    const likes = await ctx.db
+      .query("likes")
+      .withIndex("by_post", (q) => q.eq("postId", args.postId))
+      .collect();
+
+    for (const like of likes) {
+      await ctx.db.delete(like._id);
+    }
+
+    //delete associated comments
+    const comments = await ctx.db
+      .query("comments")
+      .withIndex("by_post", (q) => q.eq("postId", args.postId))
+      .collect();
+
+    for (const comment of comments) {
+      await ctx.db.delete(comment._id);
+    }
+
+    //delete associated saved posts
+    const saves = await ctx.db
+      .query("saved")
+      .withIndex("by_post", (q) => q.eq("postId", args.postId))
+      .collect();
+
+    for (const save of saves) {
+      await ctx.db.delete(save._id);
+    }
+
+    // delete the storage file
+    await ctx.storage.delete(post.storageId);
+
+    //delete post
+    await ctx.db.delete(args.postId);
+
+    //decrement user's post count
+    await ctx.db.patch(currentUser._id, {
+      posts: Math.max(0, (currentUser.posts || 1) - 1),
+    });
+
+    return true;
+  },
+});

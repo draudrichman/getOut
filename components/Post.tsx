@@ -6,11 +6,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { Id } from '@/convex/_generated/dataModel';
 import { useState } from 'react';
-import { useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import CommentsModal from './CommentsModal';
 import { formatDistanceToNow } from 'date-fns';
-
+import { useUser } from '@clerk/clerk-expo';
 interface PostProps {
     _id: Id<"posts">;
     imageUrl: string;
@@ -35,8 +35,12 @@ export default function Post({ post }: { post: PostProps }) {
     const [showComments, setShowComments] = useState(false);
     const [isSaved, setIsSaved] = useState(post.isSaved);
 
+    const { user } = useUser();
+    const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
+
     const toggleLike = useMutation(api.posts.toggleLike);
     const toggleSaved = useMutation(api.saved.toggleSaved);
+    const deletePost = useMutation(api.posts.deletePost);
 
     const handleLike = async () => {
         try {
@@ -57,6 +61,14 @@ export default function Post({ post }: { post: PostProps }) {
         }
     }
 
+    const handleDelete = async () => {
+        try {
+            await deletePost({ postId: post._id });
+        } catch (error) {
+            console.error("Error deleting post", error);
+        }
+    }
+
     return (
         <View style={styles.post}>
             {/* Post Header */}
@@ -74,13 +86,15 @@ export default function Post({ post }: { post: PostProps }) {
                     </TouchableOpacity>
                 </Link>
 
-                {/* <TouchableOpacity>
-                    <Ionicons name="ellipsis-vertical" size={20} color={COLORS.white} />
-                </TouchableOpacity> */}
+                {currentUser?._id === post.author._id ? (
+                    <TouchableOpacity onPress={handleDelete}>
+                        <Ionicons name="trash-outline" size={20} color={"hotpink"} />
+                    </TouchableOpacity>) : (
 
-                <TouchableOpacity>
-                    <Ionicons name="trash-outline" size={20} color={"hotpink"} />
-                </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Ionicons name="ellipsis-vertical" size={20} color={COLORS.white} />
+                    </TouchableOpacity>
+                )}
             </View>
 
             {/* Post Image */}
