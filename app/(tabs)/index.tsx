@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import * as Linking from 'expo-linking'
 import { useAuth, useClerk } from "@clerk/clerk-expo";
 import { styles } from "@/styles/feed.styles";
@@ -40,33 +40,31 @@ export default function Index() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => <Post post={item} />}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 50,
-        }}
-      >
-        {/* Stories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.storiesContainer}
-        >
-          {STORIES.map((story) => (
-            <Story key={story.id} story={story} />
-          ))}
-        </ScrollView>
-
-        {/* Posts */}
-        {posts.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
-
-      </ScrollView>
+        keyExtractor={(item) => item._id}
+        contentContainerStyle={{ paddingBottom: 50 }}
+        ListHeaderComponent={<StoriesSection />}
+      />
     </View>
   );
 }
 
+const StoriesSection = () => {
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.storiesContainer}
+    >
+      {STORIES.map((story) => (
+        <Story key={story.id} story={story} />
+      ))}
+    </ScrollView>
+  )
+}
 
 const NoPostsFound = () => {
   return (
