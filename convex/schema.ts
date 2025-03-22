@@ -50,14 +50,15 @@ export default defineSchema({
     type: v.union(v.literal("follow"), v.literal("like"), v.literal("comment")),
     postId: v.optional(v.id("posts")),
     commentId: v.optional(v.id("comments")),
-  }).index("by_receiver", ["receiverId"]),
-
-  saved: defineTable({
+  })
+    .index("by_receiver", ["receiverId"])
+    .index("by_post", ["postId"]),
+  
+    saved: defineTable({
     userId: v.id("users"),
     postId: v.id("posts"),
   })
     .index("by_user", ["userId"])
     .index("by_post", ["postId"])
     .index("by_user_and_post", ["userId", "postId"]),
-
 });

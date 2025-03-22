@@ -1,16 +1,13 @@
-import { Link } from "expo-router";
-import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import * as Linking from 'expo-linking'
-import { useAuth, useClerk } from "@clerk/clerk-expo";
-import { styles } from "@/styles/feed.styles";
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "@/constants/theme";
-import { STORIES } from "@/constants/mock-data";
-import Story from "@/components/Story";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
 import Post from "@/components/Post";
+import Stories from "@/components/Stories";
+import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
+import { styles } from "@/styles/feed.styles";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "convex/react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   const { signOut } = useAuth();
@@ -46,25 +43,12 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item._id}
         contentContainerStyle={{ paddingBottom: 50 }}
-        ListHeaderComponent={<StoriesSection />}
+        ListHeaderComponent={<Stories />}
       />
     </View>
   );
 }
 
-const StoriesSection = () => {
-  return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.storiesContainer}
-    >
-      {STORIES.map((story) => (
-        <Story key={story.id} story={story} />
-      ))}
-    </ScrollView>
-  )
-}
 
 const NoPostsFound = () => {
   return (

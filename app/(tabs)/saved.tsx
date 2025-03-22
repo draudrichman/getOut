@@ -59,7 +59,7 @@ function NoSavedPostsFound() {
           backgroundColor: COLORS.background,
         }}
       >
-        <Text style={{ fontSize: 22, color: COLORS.white }}>
+        <Text style={{ fontSize: 20, color: COLORS.white }}>
           No saved posts yet
         </Text>
       </View>
