@@ -8,6 +8,8 @@ import { Id } from '@/convex/_generated/dataModel';
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import CommentsModal from './CommentsModal';
+import { formatDistanceToNow } from 'date-fns';
 
 interface PostProps {
     _id: Id<"posts">;
@@ -29,6 +31,8 @@ export default function Post({ post }: { post: PostProps }) {
 
     const [isLiked, setIsLiked] = useState(post.isLiked);
     const [likesCount, setLikesCount] = useState(post.likes);
+    const [commentCount, setCommentCount] = useState(post.comments);
+    const [showComments, setShowComments] = useState(false);
 
     const toggleLike = useMutation(api.posts.toggleLike);
 
@@ -88,7 +92,7 @@ export default function Post({ post }: { post: PostProps }) {
                         />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowComments(true)}>
                         <Ionicons name="chatbubble-outline" size={22} color={COLORS.white} />
                     </TouchableOpacity>
                 </View>
@@ -101,7 +105,7 @@ export default function Post({ post }: { post: PostProps }) {
             {/* Post Info */}
             <View style={styles.postInfo}>
                 <Text style={styles.likesText}>
-                    {likesCount > 0 ? `${likesCount.toLocaleString()} likes` : "No likes yet"}
+                    {likesCount === 0 ? "No likes yet" : likesCount === 1 ? "1 like" : `${likesCount.toLocaleString()} likes`}
                 </Text>
                 {post.caption && (
                     <View style={styles.captionContainer}>
@@ -110,12 +114,25 @@ export default function Post({ post }: { post: PostProps }) {
                     </View>
                 )}
 
-                <TouchableOpacity>
-                    <Text style={styles.commentsText}>View all {post.comments} comments</Text>
-                </TouchableOpacity>
+                {commentCount > 0 && (
+                    <TouchableOpacity onPress={() => setShowComments(true)}>
+                        <Text style={styles.commentsText}>View all {post.comments} comments</Text>
+                    </TouchableOpacity>
+                )}
 
-                <Text style={styles.timeAgo}>{post._creationTime}</Text>
+                <Text style={styles.timeAgo}>
+                    {formatDistanceToNow(post._creationTime, { addSuffix: true })}
+                </Text>
             </View>
+
+            <CommentsModal
+                postId={post._id}
+                visible={showComments}
+                onClose={() => setShowComments(false)}
+                onCommentAdded={() => {
+                    setCommentCount((prev) => prev + 1);
+                }}
+            />
         </View>
     )
 }
