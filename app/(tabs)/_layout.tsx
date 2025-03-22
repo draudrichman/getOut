@@ -25,7 +25,7 @@ export default function TabLayout() {
                 name="index"
                 options={{
                     tabBarIcon: ({ size, color }) => (
-                        <Ionicons name="home" size={size} color={color} />
+                        <Ionicons name="home-outline" size={size} color={color} />
                     )
                 }}
             />
@@ -33,7 +33,7 @@ export default function TabLayout() {
                 name="saved"
                 options={{
                     tabBarIcon: ({ size, color }) => (
-                        <Ionicons name="heart" size={size} color={color} />
+                        <Ionicons name="bookmark-outline" size={size} color={color} />
                     )
                 }}
             />
@@ -51,7 +51,7 @@ export default function TabLayout() {
                 name="notifications"
                 options={{
                     tabBarIcon: ({ size, color }) => (
-                        <Ionicons name="notifications" size={size} color={color} />
+                        <Ionicons name="heart-outline" size={size} color={color} />
                     )
                 }}
             />
@@ -60,7 +60,7 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     tabBarIcon: ({ size, color }) => (
-                        <Ionicons name="person" size={size} color={color} />
+                        <Ionicons name="person-circle-outline" size={size} color={color} />
                     )
                 }}
             />

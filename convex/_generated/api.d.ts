@@ -16,6 +16,7 @@ import type {
 import type * as comments from "../comments.js";
 import type * as http from "../http.js";
 import type * as posts from "../posts.js";
+import type * as saved from "../saved.js";
 import type * as users from "../users.js";
 
 /**
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   comments: typeof comments;
   http: typeof http;
   posts: typeof posts;
+  saved: typeof saved;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
